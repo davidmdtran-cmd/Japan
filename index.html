@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17262f">
+  <title>Japan Autumn Trip Draft</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="stadium-header">
+    <img src="assets/autumn-japan-banner.png" alt="Anime-inspired autumn journey through Tokyo and Hokkaido">
+    <div class="header-shade" aria-hidden="true"></div>
+    <div class="club-mark" aria-hidden="true"><i data-lucide="leaf"></i></div>
+    <div class="header-copy">
+      <p>Japan Trip Draft</p>
+      <h1>Autumn Draft Board</h1>
+      <span>Flora, David &amp; Helen · 5-20 October 2026</span>
+    </div>
+    <div class="season-stats" aria-label="Trip summary">
+      <div><span>Trip days</span><strong>16</strong></div>
+      <div><span>Activity pool</span><strong id="totalActivityCount">...</strong></div>
+      <div><span>Paid stays</span><strong>4</strong></div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-button glass" id="undoButton" type="button" aria-label="Undo last change" title="Undo" disabled><i data-lucide="undo-2"></i></button>
+      <button class="icon-button glass" id="exportCsvButton" type="button" aria-label="Download itinerary as CSV" title="Download CSV"><i data-lucide="file-down"></i></button>
+      <button class="icon-button glass" id="exportJsonButton" type="button" aria-label="Download itinerary backup" title="Download backup"><i data-lucide="archive"></i></button>
+      <button class="icon-button glass" id="printButton" type="button" aria-label="Print selected day" title="Print selected day"><i data-lucide="printer"></i></button>
+      <button class="icon-button glass" id="resetButton" type="button" aria-label="Reset itinerary" title="Reset"><i data-lucide="rotate-ccw"></i></button>
+    </div>
+  </header>
+
+  <section class="gameweek-bar" aria-label="Trip days">
+    <div class="current-gameweek">
+      <span id="gameweekNumber">Trip day 02</span>
+      <strong id="gameweekDate">Tue 6 Oct</strong>
+      <small id="gameweekLocation">Narita to Sapporo</small>
+    </div>
+    <button class="icon-button nav-arrow" id="dateBackButton" type="button" aria-label="Earlier dates" title="Earlier dates"><i data-lucide="chevron-left"></i></button>
+    <nav class="date-rail" id="dateRail" aria-label="Choose trip day"></nav>
+    <button class="icon-button nav-arrow" id="dateForwardButton" type="button" aria-label="Later dates" title="Later dates"><i data-lucide="chevron-right"></i></button>
+  </section>
+
+  <main class="fantasy-layout" id="workspace" data-mobile-panel="squad">
+    <aside class="transfer-panel panel" aria-labelledby="marketTitle">
+      <div class="panel-titlebar">
+        <div>
+          <p>Browse</p>
+          <h2 id="marketTitle">Activity pool</h2>
+        </div>
+        <button class="icon-button" id="customButton" type="button" aria-label="Create custom activity" title="Create custom activity"><i data-lucide="plus"></i></button>
+      </div>
+
+      <div class="market-search">
+        <i data-lucide="search"></i>
+        <input id="searchInput" type="search" placeholder="Search activities and food" autocomplete="off" aria-label="Search activities and food">
+        <button class="icon-button clear-search" id="clearSearchButton" type="button" aria-label="Clear search" title="Clear search" hidden><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="region-tabs" id="regionFilter" role="group" aria-label="Region filter">
+        <button type="button" data-region="current" class="active">This day</button>
+        <button type="button" data-region="tokyo">Tokyo</button>
+        <button type="button" data-region="hokkaido">Hokkaido</button>
+        <button type="button" data-region="narita">Narita</button>
+        <button type="button" data-region="all">All</button>
+      </div>
+
+      <div class="market-filters">
+        <label><span>Type</span><select id="categoryFilter" aria-label="Filter by activity type"></select></label>
+        <label class="saved-switch"><input id="favouritesOnly" type="checkbox"><span><i data-lucide="heart"></i> Saved</span></label>
+      </div>
+
+      <details class="rating-filters" id="ratingFilters">
+        <summary>Minimum ratings <span id="ratingFilterCount"></span></summary>
+        <div class="rating-filter-grid">
+          <label>Accessibility<select data-min-rating="accessibility" aria-label="Minimum accessibility rating"></select></label>
+          <label>Autumn beauty<select data-min-rating="autumn" aria-label="Minimum autumn beauty rating"></select></label>
+          <label>Fun<select data-min-rating="fun" aria-label="Minimum fun rating"></select></label>
+          <label>Novelty<select data-min-rating="novelty" aria-label="Minimum novelty rating"></select></label>
+          <label>Once-in-a-lifetime<select data-min-rating="lifetime" aria-label="Minimum once-in-a-lifetime rating"></select></label>
+          <button type="button" class="icon-button" id="clearRatingFilters" title="Clear rating filters" aria-label="Clear rating filters"><i data-lucide="rotate-ccw"></i></button>
+        </div>
+      </details>
+      <div class="market-count"><strong id="poolCount"></strong><span id="poolRegionHint"></span></div>
+      <div class="transfer-list" id="activityList"></div>
+    </aside>
+
+    <section class="squad-panel panel" aria-labelledby="fixtureTitle">
+      <header class="fixture-header">
+        <button class="icon-button" id="previousDayButton" type="button" aria-label="Previous trip day" title="Previous trip day"><i data-lucide="chevron-left"></i></button>
+        <div class="fixture-copy">
+          <p id="fixtureLocation">Narita to Sapporo</p>
+          <h2 id="fixtureTitle">Tuesday 6 October</h2>
+          <span id="fixtureHotel">Grand Mercure Sapporo Odori Park, paid</span>
+        </div>
+        <div class="fixture-score">
+          <div><span>Picks</span><strong id="eventCount">1/11</strong></div>
+          <div><span>Hours</span><strong id="dayHours">1.5</strong></div>
+          <div id="conflictMetric"><span>Clashes</span><strong id="conflictCount">0</strong></div>
+        </div>
+        <button class="icon-button" id="nextDayButton" type="button" aria-label="Next trip day" title="Next trip day"><i data-lucide="chevron-right"></i></button>
+      </header>
+
+      <div class="fixture-alert" id="dayAlert" hidden><i data-lucide="triangle-alert"></i><span></span></div>
+
+      <div class="draft-board-wrap">
+        <div class="draft-board-toolbar">
+          <div>
+            <p>Day draft</p>
+            <strong id="draftBoardSummary">Loading schedule...</strong>
+          </div>
+          <div class="draft-legend" aria-label="Draft status legend">
+            <span><i class="legend-dot picked"></i>Picked</span>
+            <span><i class="legend-dot paid"></i>Paid</span>
+            <span><i class="legend-dot locked"></i>Locked</span>
+            <span><i class="legend-dot blocked"></i>Blocked</span>
+          </div>
+        </div>
+        <div class="draft-table-scroll">
+          <table class="draft-board" id="draftBoard" aria-label="Itinerary draft board">
+            <thead>
+              <tr>
+                <th class="draft-pick-col" scope="col">Pick</th>
+                <th class="draft-time-col" scope="col">Start</th>
+                <th scope="col">Draft selection</th>
+                <th class="draft-area-col" scope="col">Area</th>
+                <th class="draft-duration-col" scope="col">Duration</th>
+                <th class="draft-status-col" scope="col">Status</th>
+                <th class="draft-action-col" scope="col"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="draftRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <section class="substitutes" aria-labelledby="subsTitle">
+        <div class="subs-heading"><span id="subsTitle">Reserve picks</span><small>Activities sharing the same draft period</small></div>
+        <div class="subs-list" id="overflowBench"></div>
+      </section>
+    </section>
+
+    <aside class="manager-panel panel" aria-labelledby="teamSheetTitle">
+      <div class="panel-titlebar">
+        <div>
+          <p>Trip desk</p>
+          <h2 id="teamSheetTitle">Overview</h2>
+        </div>
+        <span class="save-state" id="saveState"><i data-lucide="hard-drive"></i> Saved</span>
+      </div>
+
+      <div class="manager-tabs" role="tablist" aria-label="Trip overview views">
+        <button type="button" role="tab" aria-selected="true" data-overview-tab="bench">Open</button>
+        <button type="button" role="tab" aria-selected="false" data-overview-tab="stays">Stays</button>
+        <button type="button" role="tab" aria-selected="false" data-overview-tab="budget">Budget</button>
+      </div>
+
+      <div class="manager-content" id="overviewContent"></div>
+
+      <div class="map-links">
+        <p>Trip links</p>
+        <a href="../japan_trip_costs/tokyo_food_map.html"><i data-lucide="map"></i><span>Tokyo food map</span><i data-lucide="arrow-up-right"></i></a>
+        <a href="../japan_trip_costs/sapporo_food_map.html"><i data-lucide="map"></i><span>Hokkaido food map</span><i data-lucide="arrow-up-right"></i></a>
+        <a href="../japan_trip_costs/Japan%20Trip%20Cost%20Planner%20-%20Disneyland%20Paid%20Added.xlsx"><i data-lucide="sheet"></i><span>Cost workbook</span><i data-lucide="arrow-up-right"></i></a>
+      </div>
+    </aside>
+  </main>
+
+  <nav class="mobile-tabs" aria-label="Planner sections">
+    <button type="button" data-mobile-target="market"><i data-lucide="search"></i><span>Pool</span></button>
+    <button type="button" data-mobile-target="squad" class="active"><i data-lucide="table-2"></i><span>Draft</span></button>
+    <button type="button" data-mobile-target="manager"><i data-lucide="clipboard-list"></i><span>Details</span></button>
+  </nav>
+
+  <dialog id="detailDialog" class="dialog">
+    <div class="dialog-shell">
+      <button class="icon-button dialog-close" type="button" data-close-detail aria-label="Close" title="Close"><i data-lucide="x"></i></button>
+      <div id="detailContent"></div>
+    </div>
+  </dialog>
+
+  <dialog id="editDialog" class="dialog edit-dialog">
+    <form id="editForm" class="dialog-shell">
+      <button class="icon-button dialog-close" type="button" data-close-edit aria-label="Close" title="Close"><i data-lucide="x"></i></button>
+      <p class="dialog-kicker">Draft selection</p>
+      <h2 id="editTitle">Edit activity</h2>
+      <p class="edit-subtitle" id="editSubtitle"></p>
+      <input type="hidden" name="uid">
+      <input type="hidden" name="fromDate">
+      <div class="edit-grid">
+        <label><span>Trip day</span><select name="date" id="editDate"></select></label>
+        <label><span>Start time</span><input name="start" type="time" required></label>
+        <label><span>Duration</span><select name="duration" id="editDuration"></select></label>
+        <label class="wide"><span>Notes</span><textarea name="notes" rows="4" maxlength="500"></textarea></label>
+      </div>
+      <div class="dialog-actions split-actions">
+        <button type="button" class="button danger" id="editRemoveButton"><i data-lucide="trash-2"></i> Remove</button>
+        <div>
+          <button type="button" class="button secondary" data-close-edit>Cancel</button>
+          <button type="submit" class="button primary"><i data-lucide="check"></i> Confirm pick</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="customDialog" class="dialog">
+    <form id="customForm" class="dialog-shell">
+      <button class="icon-button dialog-close" type="button" data-close-custom aria-label="Close" title="Close"><i data-lucide="x"></i></button>
+      <p class="dialog-kicker">New draft option</p>
+      <h2>Create custom activity</h2>
+      <div class="edit-grid">
+        <label class="wide"><span>Name</span><input name="title" required maxlength="100"></label>
+        <label><span>Region</span><select name="region" required><option value="tokyo">Tokyo</option><option value="hokkaido">Hokkaido</option><option value="narita">Narita</option></select></label>
+        <label><span>Type</span><select name="category"><option>Experience</option><option>Food</option><option>Shopping</option><option>Culture</option><option>Nature</option><option>Entertainment</option><option>Logistics</option></select></label>
+        <label><span>Area</span><input name="area" maxlength="80" placeholder="Neighbourhood or town"></label>
+        <label><span>Start time</span><input name="defaultStart" type="time" value="10:00"></label>
+        <label><span>Duration</span><select name="duration"><option value="30">30 min</option><option value="60">1 hour</option><option value="90" selected>1.5 hours</option><option value="120">2 hours</option><option value="180">3 hours</option><option value="240">4 hours</option><option value="480">Full day</option></select></label>
+        <label><span>Cost</span><input name="cost" maxlength="60" placeholder="Free, JPY 2,000, TBD"></label>
+        <label class="wide"><span>Scouting notes</span><textarea name="note" rows="3" maxlength="500"></textarea></label>
+      </div>
+      <label class="squad-checkbox"><input type="checkbox" name="scheduleNow"><span>Also add to this trip day</span></label>
+      <div class="dialog-actions"><button type="button" class="button secondary" data-close-custom>Cancel</button><button type="submit" class="button primary"><i data-lucide="plus"></i> Add to pool</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/lucide.min.js"></script>
+  <script src="restaurant-data.js"></script>
+  <script src="extra-activities.js"></script>
+  <script src="trip-data.js"></script>
+  <script src="trip-logistics.js"></script>
+  <script src="activity-ratings.js"></script>
+  <script src="accessibility-ratings.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
