@@ -124,7 +124,7 @@
   }
 
   function initialState() {
-    return {
+    const base = {
       dataRevision: 6,
       selectedDate: "2026-10-06",
       schedules: clone(DATA.starterSchedule),
@@ -139,6 +139,14 @@
       },
       overviewTab: "bench",
       mobilePanel: "squad",
+    };
+    const published = window.PUBLISHED_ITINERARY;
+    if (!published || published.version !== DATA.version || !published.state) return base;
+    return {
+      ...base,
+      ...clone(published.state),
+      filters: { ...base.filters, ...clone(published.state.filters || {}),
+        minRatings: normalizeMinRatings(published.state.filters?.minRatings) },
     };
   }
 
@@ -1573,13 +1581,13 @@
     elements.exportJsonButton.addEventListener("click", exportJson);
     elements.printButton.addEventListener("click", () => window.print());
     elements.resetButton.addEventListener("click", () => {
-      if (!window.confirm("Reset the whole itinerary draft to its original starter picks?")) return;
+      if (!window.confirm("Load the published itinerary? This replaces this browser's draft. Download a backup first to keep it. You can also undo this change.")) return;
       history.push(clone(state));
       state = initialState();
       persist();
       renderCategoryOptions();
       renderAll();
-      showToast("Itinerary reset to the original draft.");
+      showToast("Published itinerary loaded.");
     });
 
     document.addEventListener("keydown", (event) => {
